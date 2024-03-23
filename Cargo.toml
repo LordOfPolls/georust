@@ -1,0 +1,25 @@
+[package]
+name = "geo_rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["LordOfPolls <dev@lordofpolls.com"]
+description = "A library for geocoding and reverse geocoding using the GeoNames dataset."
+readme = "README.md"
+homepage = "https://github.com/LordOfPolls/georust"
+repository = "https://github.com/LordOfPolls/georust"
+license = "MIT"
+keywords = ["geocoding", "geonames", "zip", "location", "postcodes"]
+categories = ["science::geo", "data-structures"]
+
+
+[dependencies]
+file = "1.1.2"
+reqwest = { version = "0.12.1", features = ["json", "blocking"] }
+zip-extensions = "0.6.2"
+zip = "0.6"
+log = "0.4.14"
+
+[dev-dependencies]
+env_logger = "*"
+test-log = "0.2"
+once_cell = "1.19"
