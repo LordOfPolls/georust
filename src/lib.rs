@@ -2,10 +2,10 @@ mod haversine;
 mod load_geonames;
 mod models;
 
-pub use models::{Accuracy, Country, GeoLocation, GeoNamesData};
+pub use models::{Accuracy, Country, GeoLocation, PostalData};
 
 pub use haversine::calculate_distance;
-pub use load_geonames::get_geonames_data;
+pub use load_geonames::get_postal_data;
 
 /// Get the nearest postcode to a location.
 ///
@@ -19,8 +19,8 @@ pub use load_geonames::get_geonames_data;
 /// An `Option` containing a reference to the nearest `GeoNamesData` struct.
 pub fn get_nearest_postcode(
     location: GeoLocation,
-    geonames_data: &[GeoNamesData],
-) -> Option<&GeoNamesData> {
+    geonames_data: &[PostalData],
+) -> Option<&PostalData> {
     geonames_data
         .iter()
         .filter(|geoname| geoname.latitude.is_some() && geoname.longitude.is_some())
@@ -45,7 +45,7 @@ pub fn get_nearest_postcode(
 /// An `Option` containing a `Location` struct.
 pub fn get_postcode_location(
     postcode: &str,
-    geonames_data: &[GeoNamesData],
+    geonames_data: &[PostalData],
 ) -> Option<GeoLocation> {
     geonames_data
         .iter()
@@ -77,7 +77,7 @@ pub fn get_postcode_location(
 pub fn get_postcodes_within_radius(
     location: GeoLocation,
     radius: f64,
-    geonames_data: &[GeoNamesData],
+    geonames_data: &[PostalData],
 ) -> Vec<&str> {
     let mut postcodes: Vec<&str> = geonames_data
         .iter()
@@ -110,9 +110,9 @@ pub fn get_postcodes_within_radius(
 pub fn get_geonames_within_radius(
     location: GeoLocation,
     radius: f64,
-    geonames_data: &[GeoNamesData],
-) -> Vec<&GeoNamesData> {
-    let mut loc: Vec<&GeoNamesData> = geonames_data
+    geonames_data: &[PostalData],
+) -> Vec<&PostalData> {
+    let mut loc: Vec<&PostalData> = geonames_data
         .iter()
         .filter(|geoname| geoname.latitude.is_some() && geoname.longitude.is_some())
         .filter(|geoname| {
@@ -131,10 +131,10 @@ pub fn get_geonames_within_radius(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::load_geonames::get_geonames_data;
+    use crate::load_geonames::get_postal_data;
 
-    static GEONAMES_DATA: once_cell::sync::Lazy<Vec<GeoNamesData>> =
-        once_cell::sync::Lazy::new(|| get_geonames_data(Country::All));
+    static GEONAMES_DATA: once_cell::sync::Lazy<Vec<PostalData>> =
+        once_cell::sync::Lazy::new(|| get_postal_data(Country::All));
 
     #[test_log::test]
     fn test_haversine() {
@@ -206,7 +206,7 @@ mod tests {
 
     #[test_log::test]
     fn test_get_specific_country() {
-        let geonames_data = get_geonames_data(Country::GreatBritain);
+        let geonames_data = get_postal_data(Country::GreatBritain);
 
         assert!(geonames_data.len() > 100);
 
@@ -214,7 +214,7 @@ mod tests {
             assert_eq!(geoname.country_code, "GB");
         }
 
-        let geonames_data = get_geonames_data(Country::UnitedStates);
+        let geonames_data = get_postal_data(Country::UnitedStates);
 
         assert!(geonames_data.len() > 100);
 
@@ -269,7 +269,7 @@ mod tests {
 
     #[test_log::test]
     fn test_get_full_geonames_data() {
-        let geonames_data = get_geonames_data(Country::GreatBritainFull);
+        let geonames_data = get_postal_data(Country::GreatBritainFull);
 
         assert!(geonames_data.len() > 100);
 

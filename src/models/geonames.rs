@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct GeoNamesData {
+pub struct PostalData {
     // iso country code, 2 characters
     pub country_code: String,
     // max 20 character postal code

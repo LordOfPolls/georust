@@ -1,26 +1,26 @@
-use crate::{Country, GeoNamesData};
+use crate::{Country, PostalData};
 use std::env::temp_dir;
 use std::io::Read;
-const GEONAMES_URL: &str = "http://download.geonames.org/export/zip";
+const GENONAMES_POSTAL_URL_BASE: &str = "http://download.geonames.org/export/zip";
 
 fn get_temp_dir() -> String {
     format!("{}/geonames", temp_dir().to_str().unwrap())
 }
 
-fn get_url(country: &Country) -> String {
+fn get_postal_url(country: &Country) -> String {
     if [Country::GreatBritainFull,
         Country::UnitedKingdomFull,
         Country::NetherlandsFull,
         Country::CanadaFull]
     .contains(country)
     {
-        return format!("{}/{}.csv.zip", GEONAMES_URL, country);
+        return format!("{}/{}.csv.zip", GENONAMES_POSTAL_URL_BASE, country);
     }
 
-    format!("{}/{}.zip", GEONAMES_URL, country)
+    format!("{}/{}.zip", GENONAMES_POSTAL_URL_BASE, country)
 }
 
-pub fn download_data(country: &Country) -> Result<String, Box<dyn std::error::Error>> {
+pub fn download_postal(country: &Country) -> Result<String, Box<dyn std::error::Error>> {
     let disable_cache = std::env::var("DISABLE_GEOCODER_CACHE").is_ok();
     let cache_dir = std::env::var("GEOCODER_CACHE_DIR").unwrap_or(get_temp_dir());
 
@@ -40,7 +40,7 @@ pub fn download_data(country: &Country) -> Result<String, Box<dyn std::error::Er
         }
     }
 
-    let url = get_url(country);
+    let url = get_postal_url(country);
     log::info!("Downloading data from {}", url);
     let response = reqwest::blocking::get(url)?;
     let zip_file = response.bytes()?;
@@ -61,13 +61,13 @@ pub fn download_data(country: &Country) -> Result<String, Box<dyn std::error::Er
     Ok(data)
 }
 
-pub fn load_data(data: &str) -> Vec<GeoNamesData> {
+pub fn load_postal_data(data: &str) -> Vec<PostalData> {
     log::debug!("Parsing geonames data");
-    let data: Vec<GeoNamesData> = data
+    let data: Vec<PostalData> = data
         .lines()
         .map(|line| {
             let fields: Vec<&str> = line.split('\t').collect();
-            GeoNamesData {
+            PostalData {
                 country_code: fields[0].to_string(),
                 postal_code: fields[1].to_string(),
                 place_name: fields.get(2).map(|s| s.to_string()),
@@ -98,7 +98,7 @@ pub fn load_data(data: &str) -> Vec<GeoNamesData> {
 /// # Returns
 ///
 /// A `Vec` of `GeoNamesData` structs.
-pub fn get_geonames_data(country: Country) -> Vec<GeoNamesData> {
-    let data = download_data(&country).unwrap();
-    load_data(&data)
+pub fn get_postal_data(country: Country) -> Vec<PostalData> {
+    let data = download_postal(&country).unwrap();
+    load_postal_data(&data)
 }
