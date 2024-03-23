@@ -19,10 +19,10 @@ cargo add geo_rust
 Then you can use the library like this:
 
 ```rust
-use geocoder::{GeoLocation, Country, get_geonames_data, get_nearest_postcode};
+use geo_rust::{GeoLocation, Country, get_postal_data, get_nearest_postcode};
 
 fn main() {
-    let geonames_data = get_geonames_data(Country::All);
+    let geonames_data = get_postal_data(Country::All);
 
     let location = GeoLocation {
         latitude: 51.7923246977375,
@@ -38,10 +38,14 @@ Documentation is available at [docs.rs](https://docs.rs/geo_rust/latest/geo_rust
 
 ## Features
 
-- Calculate the haversine distance between two locations
-- Get the nearest postcode to a location
-- Get the location of a postcode
-- Get all postcodes within a certain radius of a location
+* Calculate the haversine distance between two locations
+* Get the nearest postcode to a location
+* Get the location of a postcode
+* Get all postcodes within a certain radius of a location
+* Get the nearest place to a location
+* Get the location of a place
+* Get all places within a certain radius of a location
+* Get all PostalData structs within a certain radius of a location
 
 
 ## Configuration
