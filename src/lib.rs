@@ -2,7 +2,7 @@ mod haversine;
 mod load_geonames;
 mod models;
 
-pub use models::{Country, GeoLocation, GeoNamesData, Accuracy};
+pub use models::{Accuracy, Country, GeoLocation, GeoNamesData};
 
 pub use haversine::calculate_distance;
 pub use load_geonames::get_geonames_data;
@@ -174,8 +174,6 @@ mod tests {
 
                 assert!(geoname.accuracy != models::Accuracy::NoLocation);
             }
-
-
         }
 
         assert!(no_lat_long < geonames_data.len() / 4);
@@ -239,7 +237,7 @@ mod tests {
         let postcodes = get_postcodes_within_radius(location, radius, &geonames_data);
 
         assert!(postcodes.len() > 1);
-        let min_expected = vec!["CM3", "CM7", "CM8", "CM9", "CM98", "CO5", "CO6"];
+        let min_expected = ["CM3", "CM7", "CM8", "CM9", "CM98", "CO5", "CO6"];
 
         for postcode in min_expected.iter() {
             assert!(postcodes.contains(postcode));
@@ -260,7 +258,7 @@ mod tests {
         let locations = get_geonames_within_radius(location, radius, &geonames_data);
 
         assert!(locations.len() > 1);
-        let min_expected = vec!["CM3", "CM7", "CM8", "CM9", "CM98", "CO5", "CO6"];
+        let min_expected = ["CM3", "CM7", "CM8", "CM9", "CM98", "CO5", "CO6"];
 
         for postcode in min_expected.iter() {
             assert!(locations
@@ -279,7 +277,5 @@ mod tests {
             assert!(!geoname.country_code.is_empty());
             assert!(!geoname.postal_code.is_empty());
         }
-
-
     }
 }

@@ -8,11 +8,16 @@ fn get_temp_dir() -> String {
 }
 
 fn get_url(country: &Country) -> String {
-    if vec![Country::GreatBritainFull, Country::UnitedKingdomFull, Country::NetherlandsFull, Country::CanadaFull].contains(country) {
-        return format!("{}/{}.csv.zip", GEONAMES_URL, country)
+    if [Country::GreatBritainFull,
+        Country::UnitedKingdomFull,
+        Country::NetherlandsFull,
+        Country::CanadaFull]
+    .contains(country)
+    {
+        return format!("{}/{}.csv.zip", GEONAMES_URL, country);
     }
 
-    return format!("{}/{}.zip", GEONAMES_URL, country)
+    format!("{}/{}.zip", GEONAMES_URL, country)
 }
 
 pub fn download_data(country: &Country) -> Result<String, Box<dyn std::error::Error>> {

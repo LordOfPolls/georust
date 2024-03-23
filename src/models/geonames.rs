@@ -50,7 +50,7 @@ impl FromStr for Accuracy {
             "3" => Ok(Accuracy::SamePostalCodeOtherName),
             "4" => Ok(Accuracy::GeonameId),
             "6" => Ok(Accuracy::Centroid),
-            _ => Ok(Accuracy::NoAccuracyData)
+            _ => Ok(Accuracy::NoAccuracyData),
         }
     }
 }
@@ -58,7 +58,10 @@ impl FromStr for Accuracy {
 impl Display for Accuracy {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Accuracy::Estimated => write!(f, "Estimated as average from numerically neighbouring postal codes"),
+            Accuracy::Estimated => write!(
+                f,
+                "Estimated as average from numerically neighbouring postal codes"
+            ),
             Accuracy::SamePostalCodeOtherName => write!(f, "Same postal code, other name"),
             Accuracy::GeonameId => write!(f, "Place name from geoname id"),
             Accuracy::Centroid => write!(f, "Postal code area centroid"),
