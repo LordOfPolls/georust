@@ -2,7 +2,7 @@ mod haversine;
 mod load_geonames;
 mod models;
 
-pub use models::{Country, GeoLocation, GeoNamesData};
+pub use models::{Country, GeoLocation, GeoNamesData, Accuracy};
 
 pub use haversine::calculate_distance;
 pub use load_geonames::get_geonames_data;
@@ -171,9 +171,11 @@ mod tests {
                 assert!(
                     geoname.longitude.unwrap() >= -180.0 && geoname.longitude.unwrap() <= 180.0
                 );
+
+                assert!(geoname.accuracy != models::Accuracy::NoLocation);
             }
 
-            assert!(geoname.accuracy >= 0 && geoname.accuracy <= 100);
+
         }
 
         assert!(no_lat_long < geonames_data.len() / 4);
