@@ -268,4 +268,18 @@ mod tests {
                 .any(|geoname| geoname.postal_code == *postcode));
         }
     }
+
+    #[test_log::test]
+    fn test_get_full_geonames_data() {
+        let geonames_data = get_geonames_data(Country::GreatBritainFull);
+
+        assert!(geonames_data.len() > 100);
+
+        for geoname in geonames_data.iter() {
+            assert!(!geoname.country_code.is_empty());
+            assert!(!geoname.postal_code.is_empty());
+        }
+
+
+    }
 }
