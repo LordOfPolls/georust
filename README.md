@@ -1,11 +1,22 @@
 # GeoRust
 
-A rust library for geocoding and reverse geocoding using the GeoNames dataset. 
+A rust library for geocoding and reverse geocoding using the GeoNames dataset.
 
+![GitHub Release](https://img.shields.io/github/v/release/LordOfPolls/georust?label=GitHub%20Release)
+![Crates.io Version](https://img.shields.io/crates/v/geo_rust?label=crates.io%20Version)
+![Crates.io Total Downloads](https://img.shields.io/crates/d/geo_rust)
+![Crates.io License](https://img.shields.io/crates/l/geo_rust)
 ---------
 
 
 ## Usage
+
+Run 
+```bash
+cargo add geo_rust
+```
+
+Then you can use the library like this:
 
 ```rust
 use geocoder::{GeoLocation, Country, get_geonames_data, get_nearest_postcode};
@@ -22,6 +33,8 @@ fn main() {
     println!("Nearest postcode: {}", nearest_postcode.postal_code);
 }
 ```
+
+Documentation is available at [docs.rs](https://docs.rs/geo_rust/latest/geo_rust/)
 
 ## Features
 
