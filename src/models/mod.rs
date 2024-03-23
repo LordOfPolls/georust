@@ -4,4 +4,4 @@ mod geonames;
 
 pub use countries::Country;
 pub use geolocation::GeoLocation;
-pub use geonames::GeoNamesData;
+pub use geonames::{Accuracy, GeoNamesData};

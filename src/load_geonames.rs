@@ -8,6 +8,15 @@ fn get_temp_dir() -> String {
 }
 
 fn get_url(country: &Country) -> String {
+    if [Country::GreatBritainFull,
+        Country::UnitedKingdomFull,
+        Country::NetherlandsFull,
+        Country::CanadaFull]
+    .contains(country)
+    {
+        return format!("{}/{}.csv.zip", GEONAMES_URL, country);
+    }
+
     format!("{}/{}.zip", GEONAMES_URL, country)
 }
 
@@ -70,7 +79,7 @@ pub fn load_data(data: &str) -> Vec<GeoNamesData> {
                 admin_code3: fields.get(8).map(|s| s.to_string()),
                 latitude: fields[9].parse().ok(),
                 longitude: fields[10].parse().ok(),
-                accuracy: fields.get(11).map(|s| s.parse().unwrap_or(0)).unwrap_or(0),
+                accuracy: fields[11].parse().unwrap(),
             }
         })
         .collect();

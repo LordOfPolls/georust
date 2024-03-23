@@ -19,6 +19,7 @@ pub enum Country {
     Brazil,
     Bulgaria,
     Canada,
+    CanadaFull,
     Chile,
     China,
     Colombia,
@@ -36,6 +37,7 @@ pub enum Country {
     FrenchGuiana,
     Germany,
     GreatBritain,
+    GreatBritainFull,
     Greenland,
     Guadeloupe,
     Guam,
@@ -66,6 +68,7 @@ pub enum Country {
     Monaco,
     Morocco,
     Netherlands,
+    NetherlandsFull,
     NewCaledonia,
     NewZealand,
     NorthernMarianaIslands,
@@ -99,6 +102,7 @@ pub enum Country {
     Turkey,
     Ukraine,
     UnitedKingdom,
+    UnitedKingdomFull,
     UnitedStates,
     Uruguay,
     VaticanCity,
@@ -109,6 +113,10 @@ pub enum Country {
 impl Display for Country {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Country::UnitedKingdomFull => write!(f, "GB_full"),
+            Country::GreatBritainFull => write!(f, "GB_full"),
+            Country::CanadaFull => write!(f, "CA_full"),
+            Country::NetherlandsFull => write!(f, "NL_full"),
             Country::Andorra => write!(f, "AD"),
             Country::Argentina => write!(f, "AR"),
             Country::AmericanSamoa => write!(f, "AS"),
@@ -209,7 +217,7 @@ impl Display for Country {
             Country::WallisAndFutuna => write!(f, "WF"),
             Country::Mayotte => write!(f, "YT"),
             Country::SouthAfrica => write!(f, "ZA"),
-            _ => write!(f, "allCountries"),
+            Country::All => write!(f, "AllCountries"),
         }
     }
 }
