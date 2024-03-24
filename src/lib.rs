@@ -1,5 +1,5 @@
 pub use geonames::{get_gazetteer_data, get_postal_data, invalidate_cache};
-pub use haversine::calculate_distance;
+pub use haversine::{calculate_distance, BoundingBox};
 pub use models::{Accuracy, Country, GeoLocation, PostalData};
 
 use crate::models::Gazetteer;
@@ -28,6 +28,34 @@ pub fn get_nearest_postcode(
         .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
 }
 
+/// Get the nearest postcode to a location with a bounding box.
+/// Used to filter out postcodes that are too far away.
+///
+/// # Arguments
+///
+/// * `location` - A `Location` struct representing the location.
+/// * `geonames_data` - A slice of `PostalData` structs.
+/// * `threshold` - A `f64` representing the maximum distance in kilometers.
+///
+/// # Returns
+///
+/// An `Option` containing a reference to the nearest `PostalData` struct.
+pub fn get_nearest_postcode_with_bounding(
+    location: GeoLocation,
+    geonames_data: &[PostalData],
+    threshold: f64,
+) -> Option<&PostalData> {
+    let bounds: BoundingBox = BoundingBox::new(&location, threshold);
+
+    geonames_data
+        .iter()
+        .filter(|geoname| geoname.geolocation.is_some())
+        .filter(|geoname| {
+            haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
+        .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
+}
+
 /// Get the nearest place to a location.
 ///
 /// # Arguments
@@ -42,6 +70,34 @@ pub fn get_nearest_place(location: GeoLocation, geonames_data: &[Gazetteer]) -> 
     geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
+        .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
+}
+
+/// Get the nearest place to a location with a bounding box.
+/// Used to filter out places that are too far away.
+///
+/// # Arguments
+///
+/// * `location` - A `Location` struct representing the location.
+/// * `geonames_data` - A slice of `Gazetteer` structs.
+/// * `threshold` - A `f64` representing the maximum distance in kilometers.
+///
+/// # Returns
+///
+/// An `Option` containing a reference to the nearest `Gazetteer` struct.
+pub fn get_nearest_place_with_bounding(
+    location: GeoLocation,
+    geonames_data: &[Gazetteer],
+    threshold: f64,
+) -> Option<&Gazetteer> {
+    let bounds: BoundingBox = BoundingBox::new(&location, threshold);
+
+    geonames_data
+        .iter()
+        .filter(|geoname| geoname.geolocation.is_some())
+        .filter(|geoname| {
+            haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
         .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
 }
 
@@ -113,13 +169,16 @@ pub fn get_postcodes_within_radius(
     radius: f64,
     geonames_data: &[PostalData],
 ) -> Vec<&str> {
-    let mut postcodes: Vec<&str> = geonames_data
+    let bounds: BoundingBox = BoundingBox::new(&location, radius);
+
+    let postcodes: Vec<&str> = geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .filter(|geoname| geoname.geolocation.clone().unwrap().distance(&location) <= radius)
+        .filter(|geoname| {
+            haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
         .map(|geoname| geoname.postal_code.as_str())
         .collect();
-    postcodes.dedup();
 
     postcodes
 }
@@ -140,13 +199,16 @@ pub fn get_places_within_radius(
     radius: f64,
     geonames_data: &[Gazetteer],
 ) -> Vec<&str> {
-    let mut places: Vec<&str> = geonames_data
+    let bounds: BoundingBox = BoundingBox::new(&location, radius);
+
+    let places: Vec<&str> = geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .filter(|geoname| geoname.geolocation.clone().unwrap().distance(&location) <= radius)
+        .filter(|geoname| {
+            haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
         .map(|geoname| geoname.name.as_str())
         .collect();
-    places.dedup();
 
     places
 }
@@ -202,6 +264,21 @@ mod tests {
         let geonames_data = GEONAMES_POSTAL_DATA.clone();
 
         let nearest_postcode = get_nearest_postcode(location, &geonames_data).unwrap();
+
+        assert_eq!(nearest_postcode.postal_code, "CM8");
+    }
+
+    #[test_log::test]
+    fn test_get_nearest_postcode_with_bounding() {
+        let location = GeoLocation {
+            latitude: 51.7923246977375,
+            longitude: 0.629834723775309,
+        };
+
+        let geonames_data = GEONAMES_POSTAL_DATA.clone();
+
+        let nearest_postcode =
+            get_nearest_postcode_with_bounding(location, &geonames_data, 1.0).unwrap();
 
         assert_eq!(nearest_postcode.postal_code, "CM8");
     }
@@ -276,6 +353,20 @@ mod tests {
     }
 
     #[test_log::test]
+    fn test_get_nearest_place_with_bounding() {
+        let location = GeoLocation {
+            latitude: 51.7923246977375,
+            longitude: 0.629834723775309,
+        };
+
+        let geonames_data = GEONAMES_GAZETTEER_DATA.clone();
+
+        let nearest_place = get_nearest_place_with_bounding(location, &geonames_data, 1.0).unwrap();
+
+        assert_eq!(nearest_place.name, "Witham Blunts Hall");
+    }
+
+    #[test_log::test]
     fn test_get_place_location() {
         let place = "Chelmsford";
         let geonames_data = GEONAMES_GAZETTEER_DATA.clone();
@@ -293,7 +384,7 @@ mod tests {
             longitude: 0.629834723775309,
         };
 
-        let radius = 10.0;
+        let radius = 100.0;
 
         let geonames_data = GEONAMES_GAZETTEER_DATA.clone();
 
