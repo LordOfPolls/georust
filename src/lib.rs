@@ -5,7 +5,7 @@ mod models;
 pub use models::{Accuracy, Country, GeoLocation, PostalData};
 
 use crate::models::Gazetteer;
-pub use geonames::{get_gazetteer_data, get_postal_data};
+pub use geonames::{get_gazetteer_data, get_postal_data, invalidate_cache};
 pub use haversine::calculate_distance;
 
 /// Get the nearest postcode to a location.
@@ -337,5 +337,10 @@ mod tests {
         for place in min_expected.iter() {
             assert!(places.contains(place));
         }
+    }
+
+    #[test_log::test]
+    fn test_invalidate_cache() {
+        invalidate_cache();
     }
 }

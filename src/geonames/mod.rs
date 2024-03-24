@@ -18,6 +18,26 @@ pub fn get_os_separator() -> String {
     std::path::MAIN_SEPARATOR.to_string()
 }
 
+/// Invalidate the cache.
+///
+/// This function will remove any cached data that has been downloaded.
+pub fn invalidate_cache() {
+    let cache_dir = get_temp_dir();
+
+    let postal_cache = format!("{}{}postal", cache_dir, get_os_separator());
+    let gazetteer_cache = format!("{}{}gazetteer", cache_dir, get_os_separator());
+
+    if std::path::Path::new(&postal_cache).exists() {
+        log::debug!("Removing postal cache");
+        std::fs::remove_dir_all(postal_cache).unwrap();
+    }
+
+    if std::path::Path::new(&gazetteer_cache).exists() {
+        log::debug!("Removing gazetteer cache");
+        std::fs::remove_dir_all(gazetteer_cache).unwrap();
+    }
+}
+
 pub fn download(country: &Country, data_type: Data) -> Result<String, Box<dyn std::error::Error>> {
     let disable_cache = std::env::var("DISABLE_GEOCODER_CACHE").is_ok();
     let cache_dir = std::env::var("GEOCODER_CACHE_DIR").unwrap_or(get_temp_dir());
