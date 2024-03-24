@@ -1,5 +1,5 @@
 use crate::geonames::{download, Data};
-use crate::{Country, PostalData};
+use crate::{Country, PostalData, GeoLocation};
 
 const GENONAMES_POSTAL_URL_BASE: &str = "http://download.geonames.org/export/zip";
 
@@ -34,8 +34,11 @@ pub fn load_postal_data(data: &str) -> Vec<PostalData> {
                 admin_code2: fields.get(6).map(|s| s.to_string()),
                 admin_name3: fields.get(7).map(|s| s.to_string()),
                 admin_code3: fields.get(8).map(|s| s.to_string()),
-                latitude: fields[9].parse().ok(),
-                longitude: fields[10].parse().ok(),
+                geolocation: Some(GeoLocation {
+                    latitude: fields[9].parse().unwrap(),
+                    longitude: fields[10].parse().unwrap(),
+                }),
+
                 accuracy: fields[11].parse().unwrap(),
             }
         })

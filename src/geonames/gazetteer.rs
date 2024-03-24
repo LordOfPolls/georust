@@ -1,6 +1,6 @@
 use crate::geonames::{download, Data};
 use crate::models::Gazetteer;
-use crate::Country;
+use crate::{Country, GeoLocation};
 
 const GEONAMES_GAZETTEER_URL_BASE: &str = "https://download.geonames.org/export/dump";
 
@@ -30,8 +30,10 @@ pub fn load_gazetteer_data(data: &str) -> Vec<Gazetteer> {
                 name: fields[1].to_string(),
                 asciiname: fields[2].to_string(),
                 alternate_names: fields[3].split(',').map(|s| s.to_string()).collect(),
-                latitude: fields[4].parse().unwrap(),
-                longitude: fields[5].parse().unwrap(),
+                geolocation: Some(GeoLocation {
+                    latitude: fields[4].parse().unwrap(),
+                    longitude: fields[5].parse().unwrap(),
+                }),
                 feature_class: fields[6].to_string(),
                 feature_code: fields[7].to_string(),
                 country_code: fields[8].to_string(),

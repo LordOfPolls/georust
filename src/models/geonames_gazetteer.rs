@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use crate::GeoLocation;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Gazetteer {
@@ -6,8 +7,7 @@ pub struct Gazetteer {
     pub name: String,
     pub asciiname: String,
     pub alternate_names: Vec<String>,
-    pub latitude: f64,
-    pub longitude: f64,
+    pub geolocation: Option<GeoLocation>,
     pub feature_class: String,
     pub feature_code: String,
     pub country_code: String,

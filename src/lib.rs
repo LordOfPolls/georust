@@ -23,16 +23,15 @@ pub fn get_nearest_postcode(
     geonames_data: &[PostalData],
 ) -> Option<&PostalData> {
     geonames_data
-        .iter()
-        .filter(|geoname| geoname.latitude.is_some() && geoname.longitude.is_some())
-        .min_by_key(|geoname| {
-            let location_2 = GeoLocation {
-                latitude: geoname.latitude.unwrap(),
-                longitude: geoname.longitude.unwrap(),
-            };
-            haversine::calculate_distance(&location, &location_2) as i32
-        })
+        .iter().
+        filter(|geoname| geoname.geolocation.is_some())
+            .min_by_key(|geoname| {
+                geoname.geolocation.clone().unwrap().distance(&location)  as i32
+            }
+        )
 }
+
+
 
 /// Get the nearest place to a location.
 ///
@@ -45,13 +44,11 @@ pub fn get_nearest_postcode(
 ///
 /// An `Option` containing a reference to the nearest `Gazetteer` struct.
 pub fn get_nearest_place(location: GeoLocation, geonames_data: &[Gazetteer]) -> Option<&Gazetteer> {
-    geonames_data.iter().min_by_key(|geoname| {
-        let location_2 = GeoLocation {
-            latitude: geoname.latitude,
-            longitude: geoname.longitude,
-        };
-        haversine::calculate_distance(&location, &location_2) as i32
-    })
+    geonames_data.iter()
+        .filter(|geoname| geoname.geolocation.is_some())
+        .min_by_key(|geoname| {
+            geoname.geolocation.clone().unwrap().distance(&location) as i32
+        })
 }
 
 /// Get the location of a postcode.
@@ -69,11 +66,8 @@ pub fn get_postcode_location(postcode: &str, geonames_data: &[PostalData]) -> Op
         .iter()
         .filter(|geoname| geoname.postal_code == postcode)
         .filter_map(|geoname| {
-            if let (Some(latitude), Some(longitude)) = (geoname.latitude, geoname.longitude) {
-                Some(GeoLocation {
-                    latitude,
-                    longitude,
-                })
+            if geoname.geolocation.is_some() {
+                Some(geoname.geolocation.clone().unwrap())
             } else {
                 None
             }
@@ -100,11 +94,13 @@ pub fn get_place_location(place: &str, geonames_data: &[Gazetteer]) -> Option<Ge
                 || geoname.alternate_names.contains(&place.to_string())
         })
         .filter_map(|geoname| {
-            Some(GeoLocation {
-                latitude: geoname.latitude,
-                longitude: geoname.longitude,
-            })
+            if geoname.geolocation.is_some() {
+                Some(geoname.geolocation.clone().unwrap())
+            } else {
+                None
+            }
         })
+
         .next()
 }
 
@@ -126,13 +122,9 @@ pub fn get_postcodes_within_radius(
 ) -> Vec<&str> {
     let mut postcodes: Vec<&str> = geonames_data
         .iter()
-        .filter(|geoname| geoname.latitude.is_some() && geoname.longitude.is_some())
+        .filter(|geoname| geoname.geolocation.is_some())
         .filter(|geoname| {
-            let location_2 = GeoLocation {
-                latitude: geoname.latitude.unwrap(),
-                longitude: geoname.longitude.unwrap(),
-            };
-            haversine::calculate_distance(&location, &location_2) <= radius
+            geoname.geolocation.clone().unwrap().distance(&location) <= radius
         })
         .map(|geoname| geoname.postal_code.as_str())
         .collect();
@@ -159,12 +151,9 @@ pub fn get_places_within_radius(
 ) -> Vec<&str> {
     let mut places: Vec<&str> = geonames_data
         .iter()
+        .filter(|geoname| geoname.geolocation.is_some())
         .filter(|geoname| {
-            let location_2 = GeoLocation {
-                latitude: geoname.latitude,
-                longitude: geoname.longitude,
-            };
-            haversine::calculate_distance(&location, &location_2) <= radius
+            geoname.geolocation.clone().unwrap().distance(&location) <= radius
         })
         .map(|geoname| geoname.name.as_str())
         .collect();
@@ -191,13 +180,9 @@ pub fn get_postal_data_within_radius(
 ) -> Vec<&PostalData> {
     let mut loc: Vec<&PostalData> = geonames_data
         .iter()
-        .filter(|geoname| geoname.latitude.is_some() && geoname.longitude.is_some())
+        .filter(|geoname| geoname.geolocation.is_some())
         .filter(|geoname| {
-            let location_2 = GeoLocation {
-                latitude: geoname.latitude.unwrap(),
-                longitude: geoname.longitude.unwrap(),
-            };
-            haversine::calculate_distance(&location, &location_2) <= radius
+            geoname.geolocation.clone().unwrap().distance(&location) <= radius
         })
         .collect();
     loc.dedup();
