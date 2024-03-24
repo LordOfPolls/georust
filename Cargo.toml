@@ -1,6 +1,6 @@
 [package]
 name = "geo_rust"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["LordOfPolls <dev@lordofpolls.com"]
 description = "A library for geocoding and reverse geocoding using the GeoNames dataset."
