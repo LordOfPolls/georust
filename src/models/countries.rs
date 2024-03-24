@@ -217,7 +217,7 @@ impl Display for Country {
             Country::WallisAndFutuna => write!(f, "WF"),
             Country::Mayotte => write!(f, "YT"),
             Country::SouthAfrica => write!(f, "ZA"),
-            Country::All => write!(f, "AllCountries"),
+            Country::All => write!(f, "allCountries"),
         }
     }
 }

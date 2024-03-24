@@ -25,3 +25,26 @@ pub fn calculate_distance(location_1: &GeoLocation, location_2: &GeoLocation) ->
 
     EARTH_RADIUS * c
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::GeoLocation;
+
+    use super::*;
+
+    #[test_log::test]
+    fn test_calculate_distance() {
+        let location_1 = GeoLocation {
+            latitude: -25.13275,
+            longitude: -47.50261,
+        };
+        let location_2 = GeoLocation {
+            latitude: -30.04997,
+            longitude: 140.03919,
+        };
+
+        let distance = calculate_distance(&location_1, &location_2);
+
+        assert!((distance - 13826.0).abs() < 1.0);
+    }
+}

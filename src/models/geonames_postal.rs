@@ -1,8 +1,10 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+use crate::GeoLocation;
+
 #[derive(Debug, Clone, PartialEq)]
-pub struct GeoNamesData {
+pub struct PostalData {
     // iso country code, 2 characters
     pub country_code: String,
     // max 20 character postal code
@@ -21,10 +23,8 @@ pub struct GeoNamesData {
     pub admin_name3: Option<String>,
     // 3. order subdivision (community) Code
     pub admin_code3: Option<String>,
-    // estimated latitude (wgs84)
-    pub latitude: Option<f64>,
-    // estimated longitude (wgs84)
-    pub longitude: Option<f64>,
+    // latitude and longitude in decimal degrees
+    pub geolocation: Option<GeoLocation>,
     // accuracy of lat/lng
     pub accuracy: Accuracy,
 }

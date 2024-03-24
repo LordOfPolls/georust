@@ -1,6 +1,6 @@
 [package]
 name = "geo_rust"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["LordOfPolls <dev@lordofpolls.com"]
 description = "A library for geocoding and reverse geocoding using the GeoNames dataset."
@@ -18,6 +18,7 @@ reqwest = { version = "0.12.1", features = ["json", "blocking"] }
 zip-extensions = "0.6.2"
 zip = "0.6"
 log = "0.4.14"
+chrono = "0.4.35"
 
 [dev-dependencies]
 env_logger = "0.11"
