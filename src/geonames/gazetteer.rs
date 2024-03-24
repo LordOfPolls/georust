@@ -37,7 +37,7 @@ pub fn load_gazetteer_data(data: &str) -> Vec<Gazetteer> {
                 feature_class: fields[6].to_string(),
                 feature_code: fields[7].to_string(),
                 country_code: fields[8].to_string(),
-                cc2: fields[9].to_string(),
+                alternate_country_codes: fields[9].split(',').map(|s| s.to_string()).collect(),
                 admin1_code: fields.get(10).map(|s| s.to_string()),
                 admin2_code: fields.get(11).map(|s| s.to_string()),
                 admin3_code: fields.get(12).map(|s| s.to_string()),
