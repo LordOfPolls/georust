@@ -1,5 +1,5 @@
 use crate::geonames::{download, Data};
-use crate::{Country, PostalData, GeoLocation};
+use crate::{Country, GeoLocation, PostalData};
 
 const GENONAMES_POSTAL_URL_BASE: &str = "http://download.geonames.org/export/zip";
 

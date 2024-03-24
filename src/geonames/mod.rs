@@ -1,6 +1,13 @@
+use std::env::temp_dir;
+use std::io::Read;
+
+pub use gazetteer::get_gazetteer_data;
+pub use postal::get_postal_data;
+
+use crate::Country;
+
 mod gazetteer;
 mod postal;
-use std::io::Read;
 
 pub(crate) enum Data {
     Postal,
@@ -83,11 +90,6 @@ pub fn download(country: &Country, data_type: Data) -> Result<String, Box<dyn st
 
     Ok(data)
 }
-
-use crate::Country;
-pub use gazetteer::get_gazetteer_data;
-pub use postal::get_postal_data;
-use std::env::temp_dir;
 
 #[cfg(test)]
 mod tests {

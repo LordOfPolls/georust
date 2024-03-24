@@ -6,7 +6,6 @@ pub struct GeoLocation {
     pub longitude: f64,
 }
 
-
 impl GeoLocation {
     pub fn distance(&self, other: &GeoLocation) -> f64 {
         calculate_distance(self, other)

@@ -1,12 +1,12 @@
-mod geonames;
-mod haversine;
-mod models;
-
+pub use geonames::{get_gazetteer_data, get_postal_data, invalidate_cache};
+pub use haversine::calculate_distance;
 pub use models::{Accuracy, Country, GeoLocation, PostalData};
 
 use crate::models::Gazetteer;
-pub use geonames::{get_gazetteer_data, get_postal_data, invalidate_cache};
-pub use haversine::calculate_distance;
+
+mod geonames;
+mod haversine;
+mod models;
 
 /// Get the nearest postcode to a location.
 ///
@@ -23,15 +23,10 @@ pub fn get_nearest_postcode(
     geonames_data: &[PostalData],
 ) -> Option<&PostalData> {
     geonames_data
-        .iter().
-        filter(|geoname| geoname.geolocation.is_some())
-            .min_by_key(|geoname| {
-                geoname.geolocation.clone().unwrap().distance(&location)  as i32
-            }
-        )
+        .iter()
+        .filter(|geoname| geoname.geolocation.is_some())
+        .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
 }
-
-
 
 /// Get the nearest place to a location.
 ///
@@ -44,11 +39,10 @@ pub fn get_nearest_postcode(
 ///
 /// An `Option` containing a reference to the nearest `Gazetteer` struct.
 pub fn get_nearest_place(location: GeoLocation, geonames_data: &[Gazetteer]) -> Option<&Gazetteer> {
-    geonames_data.iter()
+    geonames_data
+        .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .min_by_key(|geoname| {
-            geoname.geolocation.clone().unwrap().distance(&location) as i32
-        })
+        .min_by_key(|geoname| geoname.geolocation.clone().unwrap().distance(&location) as i32)
 }
 
 /// Get the location of a postcode.
@@ -100,7 +94,6 @@ pub fn get_place_location(place: &str, geonames_data: &[Gazetteer]) -> Option<Ge
                 None
             }
         })
-
         .next()
 }
 
@@ -123,9 +116,7 @@ pub fn get_postcodes_within_radius(
     let mut postcodes: Vec<&str> = geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .filter(|geoname| {
-            geoname.geolocation.clone().unwrap().distance(&location) <= radius
-        })
+        .filter(|geoname| geoname.geolocation.clone().unwrap().distance(&location) <= radius)
         .map(|geoname| geoname.postal_code.as_str())
         .collect();
     postcodes.dedup();
@@ -152,9 +143,7 @@ pub fn get_places_within_radius(
     let mut places: Vec<&str> = geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .filter(|geoname| {
-            geoname.geolocation.clone().unwrap().distance(&location) <= radius
-        })
+        .filter(|geoname| geoname.geolocation.clone().unwrap().distance(&location) <= radius)
         .map(|geoname| geoname.name.as_str())
         .collect();
     places.dedup();
@@ -181,9 +170,7 @@ pub fn get_postal_data_within_radius(
     let mut loc: Vec<&PostalData> = geonames_data
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
-        .filter(|geoname| {
-            geoname.geolocation.clone().unwrap().distance(&location) <= radius
-        })
+        .filter(|geoname| geoname.geolocation.clone().unwrap().distance(&location) <= radius)
         .collect();
     loc.dedup();
 
@@ -192,8 +179,9 @@ pub fn get_postal_data_within_radius(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::get_postal_data;
+
+    use super::*;
 
     static GEONAMES_POSTAL_DATA: once_cell::sync::Lazy<Vec<PostalData>> =
         once_cell::sync::Lazy::new(|| get_postal_data(Country::All));

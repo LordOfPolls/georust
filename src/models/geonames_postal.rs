@@ -1,5 +1,6 @@
 use std::fmt::Display;
 use std::str::FromStr;
+
 use crate::GeoLocation;
 
 #[derive(Debug, Clone, PartialEq)]

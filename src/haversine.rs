@@ -28,8 +28,9 @@ pub fn calculate_distance(location_1: &GeoLocation, location_2: &GeoLocation) ->
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::GeoLocation;
+
+    use super::*;
 
     #[test_log::test]
     fn test_calculate_distance() {
