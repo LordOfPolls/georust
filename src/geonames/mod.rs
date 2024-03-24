@@ -8,7 +8,14 @@ pub(crate) enum Data {
 }
 
 pub fn get_temp_dir() -> String {
-    format!("{}/geonames", temp_dir().to_str().unwrap())
+    let binding = temp_dir();
+    let path = binding.to_str().unwrap();
+    let path = path.strip_suffix(&get_os_separator());
+    format!("{}{}geonames", path.unwrap(), get_os_separator())
+}
+
+pub fn get_os_separator() -> String {
+    std::path::MAIN_SEPARATOR.to_string()
 }
 
 pub fn download(country: &Country, data_type: Data) -> Result<String, Box<dyn std::error::Error>> {
@@ -25,10 +32,11 @@ pub fn download(country: &Country, data_type: Data) -> Result<String, Box<dyn st
         Data::Postal => postal::get_postal_url(country),
         Data::Gazetteer => gazetteer::get_gazetteer_url(country),
     };
-    let cache_path = match data_type {
-        Data::Postal => format!("{}/postal/{}.txt", cache_dir, country),
-        Data::Gazetteer => format!("{}/gazetteer/{}.txt", cache_dir, country),
+    let cache_dir = match data_type {
+        Data::Postal => format!("{}{}postal", cache_dir, get_os_separator()),
+        Data::Gazetteer => format!("{}{}gazetteer", cache_dir, get_os_separator()),
     };
+    let cache_path = format!("{}{}{}.txt", cache_dir, get_os_separator(), country);
 
     if !disable_cache && std::path::Path::new(&cache_path).exists() {
         log::debug!("Using cached data from {}", cache_path);
