@@ -175,7 +175,12 @@ pub fn get_postcodes_within_radius(
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
         .filter(|geoname| {
+            // bounding box can overshoot, so we use it as a first pass
             haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
+        .filter(|geoname| {
+            // then we filter out the ones that are still too far away
+            geoname.geolocation.clone().unwrap().distance(&location) <= radius
         })
         .map(|geoname| geoname.postal_code.as_str())
         .collect();
@@ -205,7 +210,12 @@ pub fn get_places_within_radius(
         .iter()
         .filter(|geoname| geoname.geolocation.is_some())
         .filter(|geoname| {
+            // bounding box can overshoot, so we use it as a first pass
             haversine::is_within_bounding_box(&geoname.geolocation.clone().unwrap(), &bounds)
+        })
+        .filter(|geoname| {
+            // then we filter out the ones that are still too far away
+            geoname.geolocation.clone().unwrap().distance(&location) <= radius
         })
         .map(|geoname| geoname.name.as_str())
         .collect();
