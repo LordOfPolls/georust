@@ -2,6 +2,7 @@ use crate::GeoLocation;
 
 pub const EARTH_RADIUS: f64 = 6371.0;
 
+#[derive(Debug)]
 pub struct BoundingBox {
     pub min_lat: f64,
     pub max_lat: f64,
@@ -15,22 +16,20 @@ impl BoundingBox {
     /// # Arguments
     ///
     /// * `centre` - A `GeoLocation` struct representing the center of the bounding box.
-    /// * `threshold` - A `f64` representing the length of the sides of the bounding box in kilometers.
+    /// * `threshold` - A `f64` representing the threshold distance in kilometers.
     ///
     /// # Returns
     ///
     /// A `BoundingBox` struct representing the bounding box.
     pub fn new(centre: &GeoLocation, threshold: f64) -> Self {
-        let threshold = threshold * 1000.0;
-
-        let max_lat_diff = threshold / EARTH_RADIUS;
-        let max_lon_diff = threshold / (EARTH_RADIUS * centre.latitude.to_radians().cos());
+        let lat_diff = threshold / EARTH_RADIUS.to_radians();
+        let lon_diff = threshold / (EARTH_RADIUS * centre.latitude.to_radians().cos()).to_radians();
 
         BoundingBox {
-            min_lat: centre.latitude - max_lat_diff,
-            max_lat: centre.latitude + max_lat_diff,
-            min_lon: centre.longitude - max_lon_diff,
-            max_lon: centre.longitude + max_lon_diff,
+            min_lat: centre.latitude - lat_diff,
+            max_lat: centre.latitude + lat_diff,
+            min_lon: centre.longitude - lon_diff,
+            max_lon: centre.longitude + lon_diff,
         }
     }
 }
