@@ -22,7 +22,7 @@ pub fn get_os_separator() -> String {
 ///
 /// This function will remove any cached data that has been downloaded.
 pub fn invalidate_cache() {
-    let cache_dir = get_temp_dir();
+    let cache_dir = std::env::var("GEOCODER_CACHE_DIR").unwrap_or(get_temp_dir());
 
     let postal_cache = format!("{}{}postal", cache_dir, get_os_separator());
     let gazetteer_cache = format!("{}{}gazetteer", cache_dir, get_os_separator());
