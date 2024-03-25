@@ -9,7 +9,7 @@ use crate::Country;
 mod gazetteer;
 mod postal;
 
-pub(crate) enum Data {
+pub enum Data {
     Postal,
     Gazetteer,
 }
