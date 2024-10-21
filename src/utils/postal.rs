@@ -137,3 +137,24 @@ pub fn get_postal_data_within_radius(
 
     loc
 }
+
+/// Get postcode data for a given postcode.
+///
+/// # Arguments
+/// * `postcode` - A `&str` representing the postcode.
+/// * `geonames_data` - A slice of `PostalData` structs.
+///
+/// # Returns
+///
+/// An `Option` containing a `PostalData` struct.
+pub fn get_postcode(
+    postcode: &str,
+    geonames_data: &[PostalData],
+) -> Option<PostalData> {
+    geonames_data
+        .iter()
+        .filter(|geoname| geoname.postal_code == postcode)
+        .cloned()
+        .next()
+}
+

@@ -173,6 +173,16 @@ mod tests {
     }
 
     #[test_log::test]
+    fn test_get_postal_data() {
+        let geonames_data = GEONAMES_POSTAL_DATA.clone();
+        assert!(!geonames_data.is_empty());
+
+        let postcode = get_postcode("SW1A", &geonames_data);
+
+        assert!(postcode.is_some());
+    }
+
+    #[test_log::test]
     fn test_invalidate_cache() {
         invalidate_cache();
     }
