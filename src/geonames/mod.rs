@@ -18,7 +18,11 @@ pub fn get_temp_dir() -> String {
     let binding = temp_dir();
     let path = binding.to_str().unwrap();
     let path = path.strip_suffix(&get_os_separator());
-    format!("{}{}geonames", path.unwrap(), get_os_separator())
+    let path = format!("{}{}geonames", path.unwrap(), get_os_separator());
+
+    log::debug!("Using temp dir: {}", path);
+
+    return path
 }
 
 pub fn get_os_separator() -> String {
